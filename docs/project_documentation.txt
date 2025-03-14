@@ -1,0 +1,194 @@
+SOCCER FIELD HOMOGRAPHY ESTIMATION
+================================
+
+Project Overview
+---------------
+A deep learning solution for soccer field homography estimation using:
+- Multi-frame sequence analysis
+- ConvNeXt V2 feature extraction
+- Transformer-based temporal fusion
+
+Dataset Structure
+----------------
+Location: data/raw/SNGS-0XX/
+Format: Labels-GameState.json
+
+Key Components:
+1. Images
+   - Filename format: XXXXXX.jpg
+   - Resolution: 1920x1080
+   - Unique image_id
+   - Labeling flags (pitch, players, camera)
+
+2. Annotations
+   a) Players (category_id: 1,2)
+      - Image coordinates (bbox_image)
+      - Pitch coordinates (bbox_pitch)
+      - Team information
+      - Jersey numbers
+      - Tracking IDs
+
+   b) Ball (category_id: 4)
+      - Similar structure to players
+      - Center point tracking
+
+   c) Pitch Lines (category_id: 5)
+      - Line point coordinates
+      - Multiple line types (sidelines, center circle, etc.)
+      - Normalized coordinates (0-1)
+
+Data Loading Pipeline
+-------------------
+Class: SoccerHomographyDataset
+
+Configuration:
+    seq_folder: "data/raw/SNGS-060"
+    input_size: (224, 224)
+    preserve_aspect_ratio: True
+    sequence_length: 5
+    stride: 1
+
+Features:
+1. Sequence Handling
+   - Variable length sequences
+   - Previous frame tracking
+   - Temporal consistency
+
+2. Image Processing
+   - Aspect ratio preservation
+   - Proper padding
+   - Normalization
+   - Size standardization
+
+3. Point Correspondence
+   - Image to pitch mapping
+   - Player position tracking
+   - Line point extraction
+
+Output Structure:
+{
+    'sequence': [
+        {
+            'image': tensor(3,224,224),
+            'transform_params': {
+                'scale': float,
+                'padding': tuple,
+                'original_size': tuple
+            },
+            'pitch_points': {
+                'image': array,
+                'pitch': array
+            },
+            'player_points': {
+                'image': array,
+                'pitch': array
+            }
+        }
+    ],
+    'temporal_info': {
+        'player_tracks': list,
+        'ball_track': list,
+        'consistent_players': set
+    },
+    'num_frames': int,
+    'is_full_sequence': bool
+}
+
+Feature Extraction (ConvNeXt V2)
+------------------------------
+Architecture: ConvNeXt V2 Huge
+
+Feature Hierarchy:
+1. Early Layers
+   - Resolution: Highest
+   - Content: Pitch lines, field markings
+   - Usage: Precise geometry estimation
+   - Importance: 40% weight
+
+2. Middle Layers
+   - Resolution: Medium
+   - Content: Player positions, local patterns
+   - Usage: Additional constraints
+   - Importance: 35% weight
+
+3. Deep Layers
+   - Resolution: Lowest
+   - Content: Global field layout
+   - Usage: Scene understanding
+   - Importance: 25% weight
+
+Feature Integration:
+- Multi-scale fusion
+- Learned feature weights
+- Spatial attention mechanisms
+- Cross-scale relationships
+
+Processing Pipeline
+-----------------
+[Input] → [ConvNeXt V2] → [Feature Fusion] → [Transformer] → [Homography Matrix]
+
+1. Input Processing
+   - Sequence loading
+   - Size normalization
+   - Temporal alignment
+
+2. Feature Extraction
+   - Multi-scale features
+   - Hierarchical processing
+   - Spatial preservation
+
+3. Feature Fusion
+   - Scale-wise integration
+   - Attention mechanisms
+   - Temporal correlation
+
+4. Output Generation
+   - 3x3 homography matrix
+   - Confidence scores
+   - Temporal consistency checks
+
+Usage Examples
+-------------
+1. Dataset Initialization:
+   dataset = SoccerHomographyDataset(
+       seq_folder="data/raw/SNGS-060",
+       input_size=(224, 224),
+       sequence_length=5
+   )
+
+2. Data Loading:
+   dataloader = DataLoader(
+       dataset,
+       batch_size=1,
+       shuffle=False
+   )
+
+3. Feature Extraction:
+   [To be implemented]
+
+Dependencies
+-----------
+- PyTorch
+- torchvision
+- numpy
+- PIL
+- matplotlib (for visualization)
+
+File Structure
+-------------
+src/
+  data/
+    dataloader.py
+    test_dataloader.py
+    annotation_structure.txt
+  models/
+    [To be implemented]
+docs/
+  project_documentation.txt
+data/
+  raw/
+    SNGS-0XX/
+      Labels-GameState.json
+      images/
+
+[End of Documentation] 

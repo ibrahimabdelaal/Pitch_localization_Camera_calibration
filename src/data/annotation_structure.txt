@@ -1,0 +1,74 @@
+Labels-GameState.json Structure
+│
+├── info
+│   └── im_dir (image directory path)
+│
+├── images [list]
+│   └── Image Entry
+│       ├── file_name (e.g., "000001.jpg")
+│       ├── image_id (e.g., "1060000001")
+│       ├── height (e.g., 1080)
+│       ├── width (e.g., 1920)
+│       ├── is_labeled (boolean)
+│       ├── has_labeled_person (boolean)
+│       ├── has_labeled_pitch (boolean)
+│       ├── has_labeled_camera (boolean)
+│       ├── ignore_regions_y (list)
+│       └── ignore_regions_x (list)
+│
+├── annotations [list]
+│   ├── Player Annotation (category_id: 1,2)
+│   │   ├── id (unique annotation id)
+│   │   ├── image_id (links to image)
+│   │   ├── category_id
+│   │   ├── track_id (for player tracking)
+│   │   ├── supercategory: "object"
+│   │   ├── attributes
+│   │   │   ├── role: "player"/"goalkeeper"
+│   │   │   ├── jersey (player number)
+│   │   │   └── team: "left"/"right"
+│   │   ├── bbox_image
+│   │   │   ├── x, y (top-left corner)
+│   │   │   ├── w, h (width, height)
+│   │   │   ├── x_center
+│   │   │   └── y_center
+│   │   ├── bbox_pitch (transformed coordinates)
+│   │   │   ├── x_bottom_left, y_bottom_left
+│   │   │   ├── x_bottom_middle, y_bottom_middle
+│   │   │   └── x_bottom_right, y_bottom_right
+│   │   └── bbox_pitch_raw (raw pitch coordinates)
+│   │       ├── x_bottom_left, y_bottom_left
+│   │       ├── x_bottom_middle, y_bottom_middle
+│   │       └── x_bottom_right, y_bottom_right
+│   │
+│   ├── Ball Annotation (category_id: 4)
+│   │   ├── Similar structure to player
+│   │   ├── attributes
+│   │   │   └── role: "ball"
+│   │   └── bbox structures same as player
+│   │
+│   └── Pitch Annotation (category_id: 5)
+│       ├── id
+│       ├── image_id
+│       ├── category_id: 5
+│       ├── supercategory: "pitch"
+│       └── lines
+│           ├── "Circle central" [list of points]
+│           │   └── {x, y} coordinates
+│           ├── "Middle line" [list of points]
+│           │   └── {x, y} coordinates
+│           └── "Side line top" [list of points]
+│               └── {x, y} coordinates
+│
+└── categories [list]
+    └── Category Entry
+        ├── id (1: player, 2: goalkeeper, 4: ball, 5: pitch)
+        ├── name
+        └── supercategory
+
+Key Relationships:
+- Each image has a unique image_id
+- Annotations link to images via image_id
+- Players/goalkeepers have track_ids for temporal tracking
+- Pitch annotations contain line coordinates
+- All coordinates are available in both image and pitch space 

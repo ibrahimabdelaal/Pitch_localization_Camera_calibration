@@ -1,0 +1,179 @@
+{
+    "info": {
+        "im_dir": "images",
+        "description": "Soccer game state annotations",
+        "version": "1.0"
+    },
+    "images": [
+        {
+            "file_name": "000001.jpg",
+            "image_id": "1060000001",
+            "height": 1080,
+            "width": 1920,
+            "is_labeled": true,
+            "has_labeled_person": true,
+            "has_labeled_pitch": true,
+            "has_labeled_camera": true,
+            "ignore_regions_y": [],
+            "ignore_regions_x": []
+        }
+    ],
+    "annotations": [
+        {
+            "id": 1,
+            "image_id": "1060000001",
+            "category_id": 5,
+            "supercategory": "pitch",
+            "lines": {
+                "Circle central": [
+                    {
+                        "x": 0.4997,
+                        "y": 0.3556
+                    },
+                    {
+                        "x": 0.5883,
+                        "y": 0.3277
+                    }
+                ],
+                "Middle line": [
+                    {
+                        "x": 0.5000,
+                        "y": 0.2500
+                    },
+                    {
+                        "x": 0.5000,
+                        "y": 0.7500
+                    }
+                ],
+                "Side line top": [
+                    {
+                        "x": 0.2500,
+                        "y": 0.1000
+                    },
+                    {
+                        "x": 0.7500,
+                        "y": 0.1000
+                    }
+                ],
+                "Penalty area left": [
+                    {
+                        "x": 0.3000,
+                        "y": 0.3000
+                    },
+                    {
+                        "x": 0.3000,
+                        "y": 0.7000
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "image_id": "1060000001",
+            "category_id": 1,
+            "track_id": 1,
+            "supercategory": "object",
+            "attributes": {
+                "role": "player",
+                "jersey": "10",
+                "team": "left"
+            },
+            "bbox_image": {
+                "x": 100,
+                "y": 200,
+                "w": 50,
+                "h": 100,
+                "x_center": 125,
+                "y_center": 250
+            },
+            "bbox_pitch": {
+                "x_bottom_left": -10.0,
+                "y_bottom_left": 15.0,
+                "x_bottom_middle": -10.5,
+                "y_bottom_middle": 15.2,
+                "x_bottom_right": -11.0,
+                "y_bottom_right": 15.4
+            },
+            "bbox_pitch_raw": {
+                "x_bottom_left": -10.0,
+                "y_bottom_left": 15.0,
+                "x_bottom_middle": -10.5,
+                "y_bottom_middle": 15.2,
+                "x_bottom_right": -11.0,
+                "y_bottom_right": 15.4
+            }
+        },
+        {
+            "id": 3,
+            "image_id": "1060000001",
+            "category_id": 2,
+            "track_id": 2,
+            "supercategory": "object",
+            "attributes": {
+                "role": "goalkeeper",
+                "jersey": "1",
+                "team": "left"
+            },
+            "bbox_image": {
+                "x": 150,
+                "y": 300,
+                "w": 60,
+                "h": 120,
+                "x_center": 180,
+                "y_center": 360
+            },
+            "bbox_pitch": {
+                "x_bottom_left": -50.0,
+                "y_bottom_left": 2.0,
+                "x_bottom_middle": -50.5,
+                "y_bottom_middle": 2.2,
+                "x_bottom_right": -51.0,
+                "y_bottom_right": 2.4
+            }
+        },
+        {
+            "id": 4,
+            "image_id": "1060000001",
+            "category_id": 4,
+            "track_id": 3,
+            "supercategory": "object",
+            "attributes": {
+                "role": "ball"
+            },
+            "bbox_image": {
+                "x": 500,
+                "y": 400,
+                "w": 20,
+                "h": 20,
+                "x_center": 510,
+                "y_center": 410
+            },
+            "bbox_pitch": {
+                "x_bottom_middle": 0.5,
+                "y_bottom_middle": 10.2
+            }
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "player",
+            "supercategory": "object"
+        },
+        {
+            "id": 2,
+            "name": "goalkeeper",
+            "supercategory": "object"
+        },
+        {
+            "id": 4,
+            "name": "ball",
+            "supercategory": "object"
+        },
+        {
+            "id": 5,
+            "name": "pitch",
+            "supercategory": "pitch"
+        }
+    ]
+} 

@@ -1,0 +1,150 @@
+[Input: Multi-Frame Sequence]
+         │
+         ▼
+[Preprocessing & Normalization]
+         │
+         ▼
+[Patch Embedding]
+         │
+         ▼
+[Positional Encoding (Spatial & Temporal)]
+         │
+         ▼
+[Multi-Frame Transformer Encoder]
+         │    └─ Self-Attention Layers
+         │    └─ Cross-Attention for Temporal Fusion
+         ▼
+[Global Feature Aggregation (Pooling)]
+         │
+         ▼
+[Homography Regression Head (MLP)]
+         │
+         ▼
+[Predicted 3×3 Homography Matrix]
+         │
+         ▼
+[Differentiable Warping Module]
+         │
+         ▼
+[Loss Computation]
+  ├─ Homography Loss (L2)
+  ├─ Reprojection Loss
+  └─ Temporal Consistency Loss (Optional)
+
+
+Step 1: Data Preparation and Preprocessing
+Dataset:
+
+Use SoccerNet or a similar dataset with sequences of raw broadcast frames.
+Extract sequences of 
+𝑁
+N frames (e.g., 3–5 consecutive frames) per sample.
+Preprocessing:
+
+Resize images to a fixed resolution (e.g., 512×512).
+Normalize pixel values (e.g., scale to 
+[
+0
+,
+1
+]
+[0,1] or use ImageNet statistics).
+Optionally, apply minimal edge detection if it benefits learning (e.g., a Sobel filter).
+## Step 2: Patch Embedding
+Candidate Architectures:
+
+Vision Transformer (ViT):
+Standard ViT from the “timm” library can be used for patch embedding.
+Swin Transformer:
+Swin Transformer is effective at capturing local context and supports hierarchical representations.
+DINOv2 Backbone:
+Pretrained on large-scale datasets and provides robust feature representations.
+Implementation:
+
+Divide each frame into fixed-size patches (e.g., 16×16) and project them into an embedding space.
+Incorporate positional encodings that capture spatial (and later temporal) information.
+Step 3: Multi-Frame Transformer Encoder
+Architecture Options:
+
+Standard Transformer Encoder:
+Use multi-head self-attention to process tokens from all frames simultaneously.
+Hierarchical Transformers (e.g., Swin Transformer):
+They can handle multi-scale features, which is valuable if field details vary in scale.
+Temporal Fusion Mechanism:
+Consider using cross-attention layers that allow tokens from different frames to interact.
+Efficient Transformers:
+Models like Linformer or Performer could reduce computational overhead if needed.
+Implementation Tips:
+
+Stack 6–12 transformer layers.
+Use dropout and layer normalization for stability.
+Fuse the multi-frame tokens; you might consider concatenating tokens along the temporal dimension and then applying a few transformer layers to aggregate the information.
+Step 4: Global Feature Aggregation
+Techniques:
+Global Average Pooling:
+Pool the transformer’s output tokens into a single global feature vector.
+Learnable Aggregation Tokens:
+Similar to the [CLS] token in BERT, add a learnable token that aggregates the information from all patches.
+Step 5: Homography Regression Head
+Architecture:
+A simple Multi-Layer Perceptron (MLP) that takes the aggregated global feature vector and outputs 8 values for the homography (or directly a 3×3 matrix with one parameter fixed to 1).
+Candidate Layers:
+2–3 fully connected layers with ReLU activations.
+Optionally, add batch normalization to stabilize training.
+Step 6: Differentiable Warping Module
+Libraries:
+
+Kornia:
+Kornia provides a differentiable warping function that can be used to apply the predicted homography to input images or keypoints.
+PyTorch:
+Ensure the warping module is integrated as part of the computational graph to backpropagate the loss.
+Usage:
+
+Use the predicted homography to warp a grid of keypoints or even the entire image.
+Compute the reprojection loss between the warped grid and ground-truth alignment points.
+Step 7: Loss Functions and Training Strategy
+Loss Components:
+Homography L2 Loss:
+Directly penalize the difference between predicted and ground-truth homography parameters.
+Reprojection Loss:
+Compute the average Euclidean distance between warped keypoints and their ground-truth positions in the pitch coordinate system.
+Temporal Consistency Loss (Optional):
+Encourage smoothness of the predicted homography across consecutive frame sequences.
+Training:
+Use a multi-task loss that combines the above components.
+Start training on synthetic data if necessary, then fine-tune on real SoccerNet sequences.
+Leverage pretrained transformer weights (from DINOv2 or Swin) to speed up convergence.
+Step 8: Evaluation
+Metrics:
+
+Evaluate the alignment using reprojection errors on key field points.
+Use the GS-HOTA metric (if available) to compare game state reconstruction performance.
+Measure temporal consistency of the predicted homography over sequences.
+Candidate Tools:
+
+Use existing evaluation code from SoccerNet-GSR baseline as a reference.
+Visualize warped outputs to qualitatively assess alignment.
+Candidate Architectures Summary
+Backbone:
+ViT, Swin Transformer, or DINOv2.
+Encoder:
+Multi-frame transformer encoder with cross-attention for temporal fusion.
+Regression Head:
+MLP with 2–3 layers for homography regression.
+Warping:
+Differentiable warping module using Kornia.
+Frameworks and Libraries
+PyTorch:
+For building and training the model.
+timm:
+For access to pretrained transformer models.
+HuggingFace Transformers:
+Optionally, if you want a more modular transformer setup.
+Kornia:
+For differentiable image warping and geometric transformations.
+Next Steps for Implementation
+Prototype a single-frame version to ensure the basic homography regression works.
+Extend to multi-frame input, modifying the transformer encoder to fuse temporal context.
+Integrate the differentiable warping module and set up loss functions.
+Test on a small subset of SoccerNet and iterate on architecture and training details.
+Scale up training and evaluation on full dataset sequences.
