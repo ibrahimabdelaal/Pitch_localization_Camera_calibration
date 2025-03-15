@@ -1,12 +1,27 @@
 import os
+import sys
+from pathlib import Path
 import torch
 import numpy as np
-from pathlib import Path
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from src.data.dataloader import SoccerHomographyDataset
-from src.models.feature_extractor import SoccerFeatureExtractor
+# Add project root to path
+project_root = str(Path(__file__).resolve().parents[2])
+if project_root not in sys.path:
+    sys.path.append(project_root)
+
+try:
+    from src.data.dataloader import SoccerHomographyDataset
+    from src.models.feature_extractor import SoccerFeatureExtractor
+except ImportError:
+    # Fallback for direct script execution
+    import sys
+    project_root = str(Path(__file__).resolve().parents[2])
+    if project_root not in sys.path:
+        sys.path.append(project_root)
+    from src.data.dataloader import SoccerHomographyDataset
+    from src.models.feature_extractor import SoccerFeatureExtractor
 
 def extract_and_save_features(
     data_root="data/raw",  # Root folder containing SNGS-XXX folders
